@@ -20,8 +20,9 @@ var run=function(fnc,params){
     console.log(fnc+':request:'+JSON.stringify(params,null,3))
     return new Promise(function(res,rej){
         var next=function(count){
-            console.log("tries-left:"+count)
+            console.log(fnc+":tries-left:"+count)
             var request=lex[fnc](params)
+            
             request.promise()
             .tap(fnc+':result:'+console.log)
             .then(res)
@@ -34,7 +35,7 @@ var run=function(fnc,params){
                 }else if(err.code==="LimitExceededException"){
                     setTimeout(()=>next(count),4000)
                 }else{
-                    rej(err.code+':'+err.message)
+                    rej(fnc+":"+err.code+':'+err.message)
                 }
             })
         }
@@ -56,7 +57,6 @@ module.exports=function(params,es){
         name:process.env.LEX_BOT,
         versionOrAlias:"$LATEST"
     })
-    .tap(console.log)
 
     var slottype_version=Promise.join(utterances,slottype)
     .spread(function(utterances,slottype){
@@ -73,8 +73,6 @@ module.exports=function(params,es){
             checksum
         }).get('version')
     })
-    
-    
 
     var intent_version=Promise.join(slottype_version,intent)
     .spread(function(version,result){
@@ -105,7 +103,7 @@ module.exports=function(params,es){
     .then(function(checksum){
         return run('createBotVersion',{
             name:process.env.LEX_BOT
-        }).tap(console.log)
+        }).get("version").tap(console.log)
     })
     .then(function(version){
         return run('getBotVersions',{

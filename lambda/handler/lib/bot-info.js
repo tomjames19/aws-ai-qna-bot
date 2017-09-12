@@ -17,7 +17,6 @@ var lex=new aws.LexModelBuildingService()
 var axios=require("axios")
 var jszip=require('jszip')
 
-
 module.exports=function(params,es){
     var Alexa=lex.getBotVersions({
         name:process.env.LEX_BOT
@@ -25,11 +24,15 @@ module.exports=function(params,es){
     .then(function(data){
         var versions=data.bots.map(x=>x.version)
             .filter(x=>x.match(/[0-9]+/))
-            .map(parseInt)
-
-        return Math.max.apply(null,versions)
+        if(versions.length>0){
+            return Math.max.apply(null,versions)
+        }else{
+            console.log(versions.length)
+            return Promise.reject("NO_VERSIONS")
+        }
     })
     .then(function(data){
+        console.log("version",data)
         return lex.getExport({
             exportType: "ALEXA_SKILLS_KIT", 
             name:process.env.LEX_BOT, 
@@ -69,6 +72,14 @@ module.exports=function(params,es){
         ])
     })
     .then(JSON.stringify)
+    .catch(function(x){
+        console.log(x)
+        if(x==="NO_VERSIONS"){
+            return ""
+        }else{
+            return Promise.reject(x)
+        }
+    })
 
     return Promise.join(
         download(params,es),
