@@ -110,6 +110,11 @@ class Lex {
             var start=Promise.resolve()
         }
         start.then(()=>run(self.create_method,params))
+        .tap(function(){
+            if(self.type==='Bot'){
+                return run("createBotVersion",{name:params.name})
+            }
+        })
         .then(msg=>reply(null,msg.name,null))
         .error(reply).catch(reply)
     }
