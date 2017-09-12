@@ -31,7 +31,6 @@ return fs.writeFileAsync(
             JSON.stringify(base,null,1)).return(base)
     .then(function(template){
         delete template.Outputs.AdminBucket
-        delete template.Outputs.BotName
         delete template.Outputs.HandlerArn
         delete template.Outputs.HealthArn
         delete template.Outputs.FulfilmentArn

@@ -1,62 +1,29 @@
-## Create Alexa Skill
-1. Sign into the [Amazon Developer Console](https://developer.amazon.com/home.html).  
-2. Choose 'ALEXA' from the toolbar, and choose the 'Get Started' button for 'Alexa Skills Kit'  
-3. Choose 'Add a New Skill'  
-4. Create a new skill using the following information:  
-> **Skill Information**
-> Skill Name: `QnA Bot`   
-> Invocation name: `q and a`   
-  
-> **Interaction Model**
-> Intent Schema:  
-> ```
-> {
->   "intents": [
->     {
->       "slots": [
->         {
->           "name": "QnA_slot",
->           "type": "EXAMPLE_QUESTIONS"
->         }
->       ],
->       "intent": "Qna_intent"
->     }
->   ]
-> }
-> ```  
-> Custom Slot Type: `EXAMPLE_QUESTIONS`  
-> Values: <button class="clip"  
-    data-clipboard-text="{{#each bot.slotutterances }}{{this}}  
-    {{/each}}">Copy to Clip Board</button>
+### Create Alexa Skill
+1. Log in to the Alexa section of the developer portal at https://developer.amazon.com/.
+2. In the Alexa Skills Kit box, choose Get Started to open the Alexa Skill Kit page. This displays any skills you've created.
+3. Choose Add a New Skill. Fill in the required fields:
+4. Skill Type (select Custom Interaction Model)
+    Language
+    Name
+    Invocation Name
+5. Choose Save to save the new skill and then choose Next.
+6. Choose Launch Skill Builder. From the left menu, choose Code Editor.
+7. Copy Lex Export schema JSON
+> <button class="clip" data-clipboard-text="{{bot.alexa}}">Copy to ClipBoard</button>
+7. Paste the contents of the JSON file  into the code editor field.
+8. Choose Apply Changes to save your changes and then choose Build Model.  
 
-> Sample Utterances: `Qna_intent {QnA_slot}`
-  
-> **Configuration**
-> Endpoint:  Choose "AWS Lambda ARN"  
-> Choose "North America", and paste:   
->> __{{bot.lambdaArn}}__  
+Once you have uploaded the schema into an Alexa skill you can make any changes necessary for running the skill with Alexa. For more information about creating an Alexa skill, see the Use the [Skill Builder (Beta)](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/ask-define-the-vui-with-gui) in the Alexa Skills Kit
 
-> Accept all other defaults.  
+### Publishing
+If you want to publish your QnA skill, see [Submitting an Alexa Skill for Certification](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/publishing-an-alexa-skill)
 
-> **Test** 
-> Enter a test question and validate that you get the expected answer in the JSON response field. Try playing the audio for the response.
-  
-> **Publishing**
-> If you want to publish your QnA skill, see [Submitting an Alexa Skill for Certification](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/publishing-an-alexa-skill)
-> Otherwise skip this step. You will be able to access the QnA skill from Alexa devices registered to your own Amazon account. 
-
-> **Privacy and Compliance**
-> Complete this page, indicating 'no' for the privacy questions, and check the export compliance agreement.
-  
-> Save your skill.  
-
-  
 ### Test with an Alexa device
   
-> To access your unpublished skill, register your Alexa device to the same account as your Amazon Developer account. If you have a device that is not registered to the right account, you can re-register it by following these directions: [Registering an Alexa-enabled Device for Testing](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/testing-an-alexa-skill#h2_register)
+To access your unpublished skill, register your Alexa device to the same account as your Amazon Developer account. If you have a device that is not registered to the right account, you can re-register it by following these directions: [Registering an Alexa-enabled Device for Testing](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/testing-an-alexa-skill#h2_register)
   
-> You can also use the convenient 'Echo Sim' site to test your bot: https://echosim.io/  
+You can also use the convenient 'Echo Sim' site to test your bot: https://echosim.io/  
     
-> Ask questions in the form: *"Alexa, ask Q and A, How do I use Q and A Bot?"*  (Assuming your device wake word is 'Alexa')
+Ask questions in the form: *"Alexa, ask Q and A, How do I use Q and A Bot?"*  (Assuming your device wake word is 'Alexa')
 
 

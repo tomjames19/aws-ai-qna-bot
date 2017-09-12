@@ -65,6 +65,7 @@ module.exports={
         store.bot.slotutterances=data.utterances
         store.bot.lambdaArn=data.lambdaArn
         store.bot.lambdaName=data.lambdaArn.match(/arn:aws:lambda:.*:.*:function:(.*)/)[1]
+        store.bot.alexa=data.alexa
     },
     setError(store,message){
         store.error=message

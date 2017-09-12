@@ -81,16 +81,19 @@ module.exports={
         }
     },
     deleteSelected(context){
-        var list=context.state.selectIds.map(function(qid){
-            return {
-                index:context.state.QAs.findIndex(qa=>qa.qid.text===qid),
-                qid
-            }
-        })
-        
-        return Promise.all(
-            list.map(data=>context.dispatch('removeQA',data))
+        context.commit('startLoading')
+        return Promise.map(
+            context.state.selectIds,
+            qid=>context.state.client.remove(qid)
         )
+        .then(function(){
+            context.state.selectIds.map(function(qid){
+                var index=context.state.QAs.findIndex(qa=>qa.qid.text===qid)
+                context.commit('delQA',index)
+            })
+        })
+        .tapCatch(e=>console.log('Error:',e))
+        .catchThrow('Failed to remove')
     },
     build(context){
         return context.state.client.build()
@@ -318,14 +321,18 @@ module.exports={
       .tapCatch(e=>console.log('Error:',e))
       .catchThrow('Failed to remove')
     },
-    removeQA(context,{index,qid}){
+    removeQA(context,{qid}){
       context.commit('startLoading')
+      var index=context.state.QAs.findIndex(qa=>qa.qid.text===qid) 
       console.log(index,qid)
-      
-      return context.state.client.remove(qid)
-      .then(()=>context.commit('delQA',index))
-      .tapCatch(e=>console.log('Error:',e))
-      .catchThrow('Failed to remove')
+      if(index>0){
+          return context.state.client.remove(qid)
+          .then(()=>context.commit('delQA',index))
+          .tapCatch(e=>console.log('Error:',e))
+          .catchThrow('Failed to remove')
+      }else{
+        return Promise.resolve()
+      }
     },
     changeId(context,{qa,New}){
         return context.state.client.check(New)
