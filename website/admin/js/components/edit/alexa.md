@@ -1,15 +1,15 @@
 ### Create Alexa Skill
-During the following steps you will export the current state of your QnA bot into Alexa. If you later have to rebuild your QnABot you will need to repeate steps 5-9 to apply changes to Alexa. 
+During the following steps you will export the current state of your QnA bot into Alexa. If you later have to rebuild your QnABot you will need to repeate steps 6-9 to apply changes to Alexa. 
 
-1. Log in to the Alexa section of the developer portal at https://developer.amazon.com/.
-2. In the Alexa Skills Kit box, choose Get Started to open the Alexa Skill Kit page. This displays any skills you've created.
-3. Choose Add a New Skill. Fill in the required fields:
+1. Click <Button class="build" v-on:click="build">Here</button> to rebuild your QnABot
+2. Log in to the Alexa section of the developer portal at https://developer.amazon.com/.
+3. In the Alexa Skills Kit box, choose Get Started to open the Alexa Skill Kit page. This displays any skills you've created.
+4. Choose Add a New Skill. Fill in the required fields:
 > Skill Type (select Custom Interaction Model)   
-> Language   (select English) 
+> Language   (select English)  
 > Name  
-> Invocation Name (for example "Q n A")
-4. Choose Save to save the new skill and then choose Next.
-5. Click <Button class="build" v-on:click="build">Here</button> to rebuild bot
+> Invocation Name (for example "Q and A")
+5. Choose Save to save the new skill and then choose Next.
 6. Choose Launch Skill Builder. From the left menu, choose Code Editor.
 7. Click <button  class="clip">Here</button> to copy Lex Export JSON
 8. Paste the JSON from step 7  into the code editor field.

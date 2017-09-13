@@ -81,23 +81,27 @@ module.exports={
         }
     },
     deleteSelected(context){
+        var self=this
         context.commit('startLoading')
         return Promise.map(
             context.state.selectIds,
             qid=>context.state.client.remove(qid)
         )
         .then(function(){
-            context.state.selectIds.map(function(qid){
+            var Ids=new Set(context.state.selectIds.slice())
+            for(var qid of Ids){
                 var index=context.state.QAs.findIndex(qa=>qa.qid.text===qid)
+                console.log(qid,index)
                 context.commit('delQA',index)
-            })
+            }
+            return self.dispatch('get',context.state.page.current) 
         })
         .tapCatch(e=>console.log('Error:',e))
         .catchThrow('Failed to remove')
     },
     build(context){
         return context.state.client.build()
-        .delay(2000)
+        .delay(10*1000)
         .then(function(){
             return new Promise(function(res,rej){
                 var next=function(count){

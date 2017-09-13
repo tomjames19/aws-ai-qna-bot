@@ -79,6 +79,7 @@ module.exports={
         self.buildSuccess=true
       })
       .delay(2000)
+      .then(()=>self.$store.dispatch('botinfo').catch(()=>null))
       .then(()=>self.buildModal=false)
       .catch(self.error('failed to build'))
     },
