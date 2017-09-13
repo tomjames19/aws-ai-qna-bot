@@ -1,5 +1,19 @@
 <template>
-  <div id="alexa" v-html="text"></div>
+  <span>
+    <div id="alexa" v-html="text" v-on:click="buildclick"></div>
+    <div class="build-modal" v-show="buildModal">
+      <div class="build-modal-card">
+        <div v-show="building">
+          <p>Building Bot</p>
+          <icon name="spinner" class="fa-pulse"></icon>
+        </div>
+        <div v-show="buildSuccess && !building">
+          <p>Build Success</p>
+          <icon name="check"></icon>
+        </div>
+      </div>
+    </div>
+  </span>
 </template>
 
 <script>
@@ -26,9 +40,12 @@ module.exports={
     var self=this
     return {
       visible:false,
+      building:false,
+      buildSuccess:false,
+      buildModal:false,
       clipboard:new clipboard('.clip',{
         text:function(){
-          return self.$store.state.bot.slotutterances.join('\n')
+          return self.$store.state.bot.alexa
         }
       })
     }
@@ -52,6 +69,36 @@ module.exports={
     this.$store.dispatch('botinfo').catch(()=>null) 
   },
   methods:{
+    build:function(){
+      var self=this
+      self.building=true
+      self.buildModal=true
+      self.$store.dispatch('build')
+      .then(function(){
+        self.building=false
+        self.buildSuccess=true
+      })
+      .delay(2000)
+      .then(()=>self.buildModal=false)
+      .catch(self.error('failed to build'))
+    },
+    buildclick:function(e){
+      if(e.target.className==="build"){
+        this.build()
+      }
+    },
+    error:function(reason){
+      var self=this
+      return function(error){
+        console.log('Error',error)
+        self.building=false
+        self.buildSuccess=false
+        self.importExportModal=false
+        self.buildModal=false
+        self.$store.commit('setError',reason || error)
+      }
+    },
+
   } 
 }
 </script>

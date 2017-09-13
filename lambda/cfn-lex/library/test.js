@@ -42,7 +42,8 @@ module.exports={
         var bot_id
         bot.CreateAsync({
             "childDirected":"false",
-            "locale":"en-US"
+            "locale":"en-US",
+            "name":"QNA-master-3-master-1D0NHB5ZNBJJ4-QnABot-1KDAR8ZKTMDPQ-Bot"
         })
         .delay(2000)
         .then(function(id){

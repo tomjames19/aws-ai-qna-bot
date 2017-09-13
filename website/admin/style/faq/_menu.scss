@@ -19,6 +19,7 @@ $id-font-size:20px;
     ol {
       list-style-type:decimal;
       padding-left:20px;
+      margin:0 10%;
     }
     .modal-card {
       overflow-y:scroll;
@@ -33,7 +34,9 @@ $id-font-size:20px;
         width:100%;
       }
       #alexa {
-        button.clip {
+        button.clip, button.build{
+          margin:0;
+          padding:0 10;
           width:auto;
         }
       }

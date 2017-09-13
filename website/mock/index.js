@@ -139,7 +139,7 @@ module.exports=function(app){
             utterances:["ut1","ut2"],
             botname:"botname",
             lambdaArn:"arn:aws:lambda:us-east-1:613341023709:function:QNA-master-35-master-1E5674BX5SKUG-Handler-lambda-1DHH1QYYVZWJ5",
-            alexa:""
+            alexa:"{\"intents\":[{\"name\":\"fulfilment_IntentyGYjJ\",\"samples\":[\"{slot}\",\"adadadad\"],\"slots\":[{\"name\":\"slot\",\"type\":\"SlotTypeEzMJX\",\"samples\":[]}]},{\"name\":\"AMAZON.CancelIntent\",\"samples\":[]},{\"name\":\"AMAZON.HelpIntent\",\"samples\":[]},{\"name\":\"AMAZON.StopIntent\",\"samples\":[]}],\"types\":[{\"name\":\"SlotTypeEzMJX\",\"values\":[{\"name\":{\"value\":\"how bad is second hand smoke\",\"synonyms\":[]}}]}],\"prompts\":[],\"dialog\":{\"version\":\"1.0\",\"intents\":[{\"name\":\"fulfilment_IntentyGYjJ\",\"confirmationRequired\":false,\"prompts\":{},\"slots\":[{\"name\":\"slot\",\"type\":\"SlotTypeEzMJX\",\"elicitationRequired\":false,\"confirmationRequired\":false,\"prompts\":{}}]}]}}"
         })
     })
     
