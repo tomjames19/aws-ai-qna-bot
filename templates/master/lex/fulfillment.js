@@ -1,3 +1,5 @@
+var config=require('./config')
+
 module.exports={
     "Alexa":{
       "Type" : "AWS::Lambda::Permission",
@@ -26,21 +28,16 @@ module.exports={
         },
         "Environment": {
           "Variables": {
-            "ES_TYPE": {"Ref": "Type"},
-            "ES_INDEX": {"Ref": "Index"},
-            "ES_ADDRESS": {"Ref": "Address"},
-            "ERRORMESSAGE":{"Ref":"ErrorMessage"},
-            "EMPTYMESSAGE":{"Ref":"EmptyMessage"}
+            ES_TYPE:{"Fn::GetAtt":["Var","type"]},
+            ES_INDEX:{"Fn::GetAtt":["Var","index"]},
+            ES_ADDRESS:{"Fn::GetAtt":["ESVar","ESAddress"]},
+            "ERRORMESSAGE":config.ErrorMessage,
+            "EMPTYMESSAGE":config.EmptyMessage
           }
         },
         "Handler": "index.handler",
         "MemorySize": "1408",
-        "Role": {
-          "Fn::GetAtt": [
-            "LambdaRole",
-            "Arn"
-          ]
-        },
+        "Role": {"Fn::GetAtt": ["FulfillmentLambdaRole","Arn"]},
         "Runtime": "nodejs6.10",
         "Timeout": 300
       }
@@ -61,45 +58,10 @@ module.exports={
               ]
             }]
         },
-        "Roles": [{"Ref": "LambdaRole"}]
+        "Roles": [{"Ref": "FulfillmentLambdaRole"}]
       }
     },
-    "EsPolicy": {
-      "Type": "AWS::IAM::ManagedPolicy",
-      "Properties": {
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Action": [
-                "es:*"
-              ],
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "/",
-                    [
-                      {
-                        "Ref": "DomainArn"
-                      },
-                      "*"
-                    ]
-                  ]
-                }
-              ]
-            },
-            {
-              "Effect": "Allow",
-              "Action": ["lex:*"],
-              "Resource": ["*"]
-            }
-          ]
-        },
-        "Roles": [{"Ref": "LambdaRole"}]
-      }
-    },
-    "LambdaRole": {
+    "FulfillmentLambdaRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
@@ -116,7 +78,8 @@ module.exports={
         },
         "Path": "/",
         "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          {"Ref":"EsPolicy"}
         ]
       }
     }

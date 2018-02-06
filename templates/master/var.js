@@ -20,18 +20,45 @@ module.exports={
         "ESArn": {"Fn::If":[
             "CreateDomain",
             {"Fn::GetAtt":["ElasticsearchDomain","DomainArn"]},
-            {"Ref":"ElasticSearchArn"}
+            {"Fn::GetAtt":["ESInfo","Arn"]}
         ]},
         "ESAddress":{"Fn::If":[
             "CreateDomain",
             {"Fn::GetAtt":["ElasticsearchDomain","DomainEndpoint"]},
-            {"Ref":"ElasticSearchAddress"}
+            {"Fn::GetAtt":["ESInfo","Endpoint"]}
         ]},
         "ESDomain":{"Fn::If":[
             "CreateDomain",
             {"Ref":"ElasticsearchDomain"},
-            {"Ref":"ElasticSearchName"}
+            {"Ref":"ElasticsearchName"}
         ]}
+    }
+},
+"ApiUrl":{
+    "Type": "Custom::Variable",
+    "Properties": {
+        "ServiceToken": { "Fn::GetAtt" : ["CFNLambda", "Arn"] },
+        "Name":{"Fn::Join": ["",[
+            "https://",
+            {"Ref": "API"},
+            ".execute-api.",
+            {"Ref": "AWS::Region"},
+            ".amazonaws.com/prod"
+        ]]}
+    }
+},
+"Urls":{
+    "Type": "Custom::Variable",
+    "Properties": {
+        "ServiceToken": { "Fn::GetAtt" : ["CFNLambda", "Arn"] },
+        "Designer":{"Fn::Join": ["",[
+            {"Fn::GetAtt":["ApiUrl","Name"]},
+            "/static/index.html"
+        ]]},
+        "Client":{"Fn::Join": ["",[
+            {"Fn::GetAtt":["ApiUrl","Name"]},
+            "/static/client.html"
+        ]]}
     }
 }
 }

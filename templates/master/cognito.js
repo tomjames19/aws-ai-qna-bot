@@ -132,11 +132,7 @@ module.exports={
       "Properties": {
         "UserPoolName": {"Fn::Join": ["-",["UserPool",{"Ref": "AWS::StackName"}]]},
         "AdminCreateUserConfig":{
-           "AllowAdminCreateUserOnly":{"Fn::If":[
-                "SignUp",
-                false,
-                true
-            ]},
+           "AllowAdminCreateUserOnly":{"Fn::If":["AdminSignUp",true,false]},
            "InviteMessageTemplate":{
                 "EmailMessage":{"Fn::Sub":fs.readFileSync(__dirname+'/invite.txt','utf8')},
                 "EmailSubject":"Welcome to QnABot!"

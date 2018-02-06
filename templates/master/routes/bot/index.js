@@ -80,7 +80,7 @@ function config(opts){
                 "arn:aws:apigateway:",
                 {"Ref": "AWS::Region"},
                 ":lambda:path/2015-03-31/functions/",
-                {"Ref":"FulfillmentArn"},
+                {"Fn::GetAtt":["FulfillmentLambda","Arn"]},
                 "/configuration"
             ]]},
             "IntegrationResponses": [{

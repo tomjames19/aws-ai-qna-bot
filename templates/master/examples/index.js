@@ -92,9 +92,9 @@ function jslambda(name){
         },
         "Environment": {
           "Variables": {
-            "ES_TYPE": {"Ref": "ESType"},
-            "ES_INDEX": {"Ref": "ESIndex"},
-            "ES_ADDRESS": {"Ref": "ESAddress"},
+            "ES_TYPE": {"Fn::GetAtt":["Var","type"]},
+            "ES_INDEX": {"Fn::GetAtt":["Var","index"]},
+            "ES_ADDRESS": {"Fn::GetAtt":["ESVar","ESAddress"]},
           }
         },
         "FunctionName":{"Fn::Sub":`qna-\${AWS::StackName}-${name}`},

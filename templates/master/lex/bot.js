@@ -9,14 +9,14 @@ module.exports={
         "Principal": "lex.amazonaws.com"
       }
     },
-    "QNASlot":{
+    "SlotType":{
         "Type": "Custom::LexSlotType",
         "Properties": {
             "ServiceToken": { "Fn::GetAtt" : ["CFNLambda", "Arn"] },
             "enumerationValues": config.utterances.map(x=>{return {value:x}})
         }
     },
-    "QNAIntent": {
+    "Intent": {
       "Type": "Custom::LexIntent",
       "Properties": {
         "ServiceToken": {
@@ -28,7 +28,7 @@ module.exports={
         ],
         "slots": [{
             "name":"slot",
-            "slotType":{"Ref":"QNASlot"},
+            "slotType":{"Ref":"SlotType"},
             "slotConstraint":"Optional",
             "slotTypeVersion":"$LATEST"
         }],
@@ -42,7 +42,7 @@ module.exports={
       },
       "DependsOn": "QNAInvokePermission"
     },
-    "Bot": {
+    "LexBot": {
       "Type": "Custom::LexBot",
       "Properties": {
         "ServiceToken": {
@@ -56,7 +56,7 @@ module.exports={
         "voiceId": config.voiceId,
         "childDirected": false,
         "intents": [
-            {"intentName": {"Ref": "QNAIntent"},"intentVersion": "$LATEST"}
+            {"intentName": {"Ref": "Intent"},"intentVersion": "$LATEST"}
         ],
         "clarificationPrompt": {
           "maxAttempts": 5,
@@ -79,6 +79,7 @@ module.exports={
     },
     "Alias": {
       "Type": "Custom::LexAlias",
+      "DependsOn": "LexBot",
       "Properties": {
         "ServiceToken": {
           "Fn::GetAtt": [
@@ -87,10 +88,9 @@ module.exports={
           ]
         },
         "botName": {
-          "Ref": "Bot"
+          "Ref": "LexBot"
         },
         "botVersion": "$LATEST"
-      },
-      "DependsOn": "Bot"
+      }
     }
 }

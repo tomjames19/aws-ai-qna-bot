@@ -27,7 +27,7 @@
                 "view": "timeSeries",
                 "stacked": false,
                 "metrics": [
-                    [ "AWS/ES", "FreeStorageSpace", "DomainName", "${ESDomain}", "ClientId", "${AWS::AccountId}", { "period": 60 } ],
+                    [ "AWS/ES", "FreeStorageSpace", "DomainName", "${ESVar.ESDomain}", "ClientId", "${AWS::AccountId}", { "period": 60 } ],
                     [ ".", "SearchableDocuments", ".", ".", ".", ".", { "yAxis": "right", "period": 60 } ]
                 ],
                 "region": "${AWS::Region}",
@@ -44,7 +44,7 @@
                 "view": "timeSeries",
                 "stacked": false,
                 "metrics": [
-                    [ "AWS/Lex", "MissedUtteranceCount", "BotVersion", "$LATEST", "Operation", "PostText", "BotName", "${Botname}" ],
+                    [ "AWS/Lex", "MissedUtteranceCount", "BotVersion", "$LATEST", "Operation", "PostText", "BotName", "${Bot}" ],
                     [ ".", "RuntimeSucessfulRequestLatency", ".", ".", ".", ".", ".", ".", { "yAxis": "right" } ],
                     [ ".", "RuntimeRequestCount", ".", ".", ".", ".", ".", "." ]
                 ],
@@ -62,7 +62,7 @@
                 "view": "timeSeries",
                 "stacked": false,
                 "metrics": [
-                    [ "AWS/Lambda", "Errors", "FunctionName", "${FulfillmentName}", { "stat": "Sum" } ],
+                    [ "AWS/Lambda", "Errors", "FunctionName", "${FulfillmentLambda}", { "stat": "Sum" } ],
                     [ ".", "Invocations", ".", ".", { "stat": "Sum" } ],
                     [ ".", "Duration", ".", ".", { "yAxis": "right" } ],
                     [ ".", "Throttles", ".", ".", { "stat": "Sum" } ]

@@ -1,4 +1,3 @@
-#! /usr/bin/env node
 /*
 Copyright 2017-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
@@ -12,26 +11,11 @@ BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, express or implied. See the
 License for the specific language governing permissions and limitations under the License.
 */
 
-var base=require('./api.json')
-
-base.Resources=Object.assign(
-    require('./dashboard'),
-    require('./examples'),
-    require('./import'),
-    require('./assets'),
-    require('./signup'),
-    require('./config'),
-    require('./routes'),
-    require('./lambda'),
-    require('./policies'),
-    require('./roles'),
-    require('./cognito'),
-    require('./cfn'),
-    require('./s3'),
-    require('./var'),
-    require('./proxy-es'),
-    require('./proxy-lex'),
-    require('./lex-build')
-)
-
-module.exports=base
+module.exports={
+    "voiceId":"Joanna",
+    "Clarification":"Sorry, can you please repeat that?",
+    "ErrorMessage":"Sadly I encountered an error when searching for your answer. Please ask me again later.",
+    "EmptyMessage":"You stumped me! Sadly I don't know how to answer your question.",
+    "Abort":"Sorry, can you please repeat that?",
+    "utterances":require('../../../assets/default-utterances')
+}
