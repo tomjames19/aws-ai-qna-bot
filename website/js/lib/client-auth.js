@@ -3,6 +3,7 @@ var axios=require('axios')
 var _=require('lodash')
 var query=require('query-string')
 var jwt=require('jsonwebtoken')
+var lexProxy=require('./lex')
 
 module.exports=function(){
     return Promise.resolve(axios.head(window.location.href))
@@ -47,7 +48,7 @@ module.exports=function(){
         aws.config.credentials=result.credentials
         return {
             config:aws.config,
-            lex:new aws.LexRuntime(),
+            lex:lexProxy(aws,),
             polly:new aws.Polly(),
             username:result.username,
             Login:result.Login
