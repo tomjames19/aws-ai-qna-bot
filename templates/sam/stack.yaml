@@ -1,0 +1,163 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  FIREHOSE:
+    Type: String
+    Default: QnABot-FeedbackFirehose-1VNU53MBYJ22T
+Resources:
+  FeedbackSNS:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: SLUBOT - Feedback topic
+      TopicName: SLUBot-Feedback
+  slubusstops:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: slu-bus-stops
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: N
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  slubusroutes:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: slu-bus-routes
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: N
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  slubuses:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: slu-buses
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: N
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  qnawhatsopennow:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: qna-whats-open-now
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.7
+      CodeUri: s3://slu-pipeline-1/2918aaa0f962ad52269939e860036241
+      Description: returns what restaurants/dining halls are open at SLU
+      MemorySize: 2432
+      Timeout: 63
+      Environment:
+        Variables:
+          PATH: /var/task/bin
+          PYTHONPATH: /var/task/lib
+  qnabushandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: qna-bus-handler
+      Handler: lambda_function.bushandler
+      Runtime: python3.6
+      CodeUri: s3://slu-pipeline-1/41260e610c9cbf67f653b5469b427ba6
+      Description: returns bus information for SLU routes
+      MemorySize: 128
+      Timeout: 10
+      Environment:
+        Variables:
+          BUSES:
+            Ref: slubuses
+          ROUTES:
+            Ref: slubusroutes
+          STOPS:
+            Ref: slubusstops
+          Intro: The following bus schedules were found
+      Policies:
+      - DynamoDBReadPolicy:
+          TableName: '*'
+  ThumbsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: qna-feedback
+      Handler: lambda_function.feedback_handler
+      Runtime: python3.6
+      Environment:
+        Variables:
+          FIREHOSE_NAME:
+            Ref: FIREHOSE
+          SNS_TOPIC_ARN:
+            Ref: FeedbackSNS
+      CodeUri: s3://slu-pipeline-1/446c658917cb8a2e23a0bcb4f03219d2
+      Description: enables thumbs down and thumbs up feedback backend
+      MemorySize: 128
+      Timeout: 10
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - firehose:PutRecordBatch
+          - firehose:PutRecord
+          Resource: '*'
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - sns:Publish
+          Resource:
+            Ref: FeedbackSNS
+  slupopulateBusData:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: qna-slu-populate-busdata
+      Handler: lambda_function.populateData
+      Runtime: python3.6
+      CodeUri: s3://slu-pipeline-1/02be3fb006524d4aa23243639d87a8da
+      Description: Poplulates doublemap data to dynamodb table
+      MemorySize: 128
+      Timeout: 10
+      Policies:
+      - AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          BUSES:
+            Ref: slubuses
+          ROUTES:
+            Ref: slubusroutes
+          STOPS:
+            Ref: slubusstops
+Outputs:
+  PopulateBus:
+    Description: Arn for populate bus data lambda hook
+    Value:
+      Fn::GetAtt:
+      - slupopulateBusData
+      - Arn
+  ThumbsFunction:
+    Description: Arn for populate bus data lambda hook
+    Value:
+      Fn::GetAtt:
+      - ThumbsFunction
+      - Arn
+  BusHandler:
+    Description: Arn for populate bus data lambda hook
+    Value:
+      Fn::GetAtt:
+      - qnabushandler
+      - Arn
+  OpenNow:
+    Description: Arn for populate bus data lambda hook
+    Value:
+      Fn::GetAtt:
+      - qnawhatsopennow
+      - Arn
