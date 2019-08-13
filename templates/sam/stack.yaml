@@ -55,7 +55,7 @@ Resources:
       FunctionName: qna-whats-open-now
       Handler: lambda_function.lambda_handler
       Runtime: python3.7
-      CodeUri: s3://slu-pipeline-1/2918aaa0f962ad52269939e860036241
+      CodeUri: s3://slu-pipeline-1/a8a3e0fd0f8ab6d54e954e30112fc188
       Description: returns what restaurants/dining halls are open at SLU
       MemorySize: 2432
       Timeout: 63
@@ -69,7 +69,7 @@ Resources:
       FunctionName: qna-bus-handler
       Handler: lambda_function.bushandler
       Runtime: python3.6
-      CodeUri: s3://slu-pipeline-1/41260e610c9cbf67f653b5469b427ba6
+      CodeUri: s3://slu-pipeline-1/b1cece27d7cb0ba635e5a2670bc05dc9
       Description: returns bus information for SLU routes
       MemorySize: 128
       Timeout: 10
@@ -97,7 +97,7 @@ Resources:
             Ref: FIREHOSE
           SNS_TOPIC_ARN:
             Ref: FeedbackSNS
-      CodeUri: s3://slu-pipeline-1/446c658917cb8a2e23a0bcb4f03219d2
+      CodeUri: s3://slu-pipeline-1/c0ef84bd96dfb4f8c30ee74644a80306
       Description: enables thumbs down and thumbs up feedback backend
       MemorySize: 128
       Timeout: 10
@@ -122,7 +122,7 @@ Resources:
       FunctionName: qna-slu-populate-busdata
       Handler: lambda_function.populateData
       Runtime: python3.6
-      CodeUri: s3://slu-pipeline-1/02be3fb006524d4aa23243639d87a8da
+      CodeUri: s3://slu-pipeline-1/544bbbe0885c1ebbaf5d78b492e29423
       Description: Poplulates doublemap data to dynamodb table
       MemorySize: 128
       Timeout: 10

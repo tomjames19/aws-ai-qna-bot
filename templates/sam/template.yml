@@ -86,9 +86,20 @@ Resources:
           STOPS: !Ref slubusstops
           Intro: The following bus schedules were found
       Policies: 
-        - DynamoDBReadPolicy:
-            TableName: '*'
-
+        - Version: '2012-10-17' # Policy Document
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                -  dynamodb:Scan
+                -  dynamodb:Query
+                -  dynamodb:BatchGetItem
+                -  dynamodb:DescribeTable
+              Resource:
+                - !GetAtt slubusroutes.Arn
+                - !GetAtt slubuses.Arn
+                - !GetAtt slubusstops.Arn
+ 
   ThumbsFunction: 
     Type: AWS::Serverless::Function 
     Properties: 
@@ -115,7 +126,7 @@ Resources:
         - Version: '2012-10-17' # Policy Document
           Statement:
            - Effect: Allow
-             Action:
+             Action: 
               - sns:Publish
              Resource: !Ref FeedbackSNS
 
@@ -130,7 +141,14 @@ Resources:
       MemorySize: 128
       Timeout: 10
       Policies: 
-        - AmazonDynamoDBFullAccess
+        - Version: '2012-10-17' # Policy Document
+          Statement:
+            - Effect: Allow
+              Action: dynamodb:*
+              Resource:
+                - !GetAtt slubusroutes.Arn
+                - !GetAtt slubuses.Arn
+                - !GetAtt slubusstops.Arn
       Environment:
         Variables:
           BUSES: !Ref slubuses

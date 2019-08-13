@@ -21,14 +21,15 @@ sam deploy --template-file stack.yaml --region us-east-1 --capabilities CAPABILI
 
 # wait for stack to be complete
 echo "WAITING ..."
-aws cloudformation wait stack-create-complete --stack-name $2
+# aws cloudformation wait stack-create-complete --stack-name $2
 
-FEEDBACK="$(aws cloudformation describe-stacks --stack-name $2 --query "Stacks[0].Outputs[*].OutputValue" | grep 'feedback')"
-OPEN="$(aws cloudformation describe-stacks --stack-name $2 --query "Stacks[0].Outputs[*].OutputValue" | grep 'whats-open-now')"
-BUS="$(aws cloudformation describe-stacks --stack-name $2 --query "Stacks[0].Outputs[*].OutputValue" | grep 'bus-handler')"
-POPULATE="$(aws cloudformation describe-stacks --stack-name $2 --query "Stacks[0].Outputs[*].OutputValue" | grep 'populate')"
+FEEDBACK=$(aws cloudformation describe-stacks --stack-name $2 --query "Stacks[0].Outputs[*].OutputValue" | sed "s/,/ /g" | grep 'feedback')
+OPEN=$(aws cloudformation describe-stacks --stack-name $2 --query "Stacks[0].Outputs[*].OutputValue" | sed "s/,/ /g" | grep 'whats-open-now')
+BUS=$(aws cloudformation describe-stacks --stack-name $2 --query "Stacks[0].Outputs[*].OutputValue" | sed "s/,/ /g" | grep 'bus-handler')
+POPULATE=$(aws cloudformation describe-stacks --stack-name $2 --query "Stacks[0].Outputs[*].OutputValue" | sed "s/,/ /g" | grep 'populate')
 
-# python jsonInjector(FEEDBACK, OPEN, BUS, POPULATE)
+python arn_injector.py $FEEDBACK $OPEN $BUS
+
 echo "Stack outputs"
 echo $FEEDBACK
 echo $OPEN
