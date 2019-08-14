@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#Script takes 3 arguments [1. S3 bucket| 2. Stack name | 3. existing Firehose name for feedback function]
+
 # create a virtual environment with python 3 to work from within
 echo "CREATING VIRTUAL ENVIRONMENT"
 virtualenv -p /usr/bin/python3 vp3
@@ -17,7 +19,8 @@ fi
 echo "PACKAGING SAM TEMPLATE"
 sam package --output-template stack.yaml --s3-bucket $1
 echo "DEPLOYING SAM STACK"
-sam deploy --template-file stack.yaml --region us-east-1 --capabilities CAPABILITY_IAM --stack-name $2
+sam deploy --template-file stack.yaml --region us-east-1 --capabilities CAPABILITY_IAM --stack-name $2 --parameter-overrides STACK=$2 FIREHOSE=$3
+
 
 # wait for stack to be complete
 echo "WAITING ..."
