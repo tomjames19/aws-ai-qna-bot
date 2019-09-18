@@ -4,7 +4,11 @@ var aws=require('aws-sdk');
 
 // Config params from environment (or defaults if env not set)
 var use_keyword_filters = process.env.ES_USE_KEYWORD_FILTERS || "true";
+<<<<<<< HEAD
 var keyword_syntax_types = process.env.ES_KEYWORD_SYNTAX_TYPES || "NOUN,PROPN,INTJ";
+=======
+var keyword_syntax_types = process.env.ES_KEYWORD_SYNTAX_TYPES || "NOUN,PROPN,VERB,INTJ";
+>>>>>>> 6a92eb607996d58c63f65acfc8ad03243c66d940
 var syntax_confidence_limit = process.env.ES_SYNTAX_CONFIDENCE_LIMIT || .20;
 var stopwords = process.env.ES_STOPWORDS || "a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with";
 
