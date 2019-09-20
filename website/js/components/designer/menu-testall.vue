@@ -28,7 +28,7 @@
                   v-list-tile-content.job-content
                     v-list-tile-title {{job.id}}: {{job.status}}
                     v-list-tile-sub-title
-                      v-progress-linear(v-model="job.progress*100")
+                      v-progress-linear(v-bind:indeterminate="isIndeterminate(job)" v-model="job.progress*100")
                   v-list-tile-action.job-actions(
                     style="flex-direction:row; width:80px;"
                   )
@@ -97,8 +97,12 @@ data:function(){
           me.closeModal();
       });
   },
-  computed:{},
+  computed:{
+  },
   methods:{
+      isIndeterminate(job) {
+          return (job.status==="Completed" ? false : true);
+      },
       showModal() {
           this.isModalVisible = true;
       },
@@ -188,7 +192,15 @@ data:function(){
           for (let idx=1; idx<rows.length; idx++) {
               if (rows[idx].length>0) {
                   let currentRow = rows[idx].split(',');
-                  dataRows.push(currentRow);
+                  if (currentRow.length > 6) {
+                      // handle case where ',' appears in last column and join into a single column'
+                      let revisedRow = currentRow.slice(0,5);
+                      let additions = currentRow.slice(5);
+                      revisedRow.push(additions.join(","));
+                      dataRows.push(revisedRow);
+                  } else {
+                      dataRows.push(currentRow);
+                  }
               }
           }
           this.tableHeader = rows[0].split(',');
