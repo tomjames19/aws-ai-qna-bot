@@ -41,6 +41,90 @@ module.exports=Object.assign(
             "version":{"Ref":"EXTUiImportVersion"}
         })
     },
+    "ScheduledRule": {
+  "Type": "AWS::Events::Rule",
+    "Properties": {
+      "Description": "schedules rule for populate bus",
+      "ScheduleExpression": "rate(2 minutes)",
+      "State": "ENABLED",
+      "Targets": [{
+        "Arn": { "Fn::GetAtt": ["EXTQnaPopulateBusData", "Arn"] },
+        "Id": "TargetFunctionV1"
+        }]
+      }
+    },
+    "PermissionForEventsToInvokeLambda": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": { "Ref": "EXTQnaPopulateBusData" },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": { "Fn::GetAtt": ["ScheduledRule", "Arn"] }
+      }
+    },
+    "slubusstops": {
+        "Type": "AWS::DynamoDB::Table",
+        "Properties": {
+            "AttributeDefinitions": [
+                {
+                    "AttributeName": "id",
+                    "AttributeType": "N"
+                }
+            ],
+            "KeySchema": [
+                {
+                    "AttributeName": "id",
+                    "KeyType": "HASH"
+                }
+            ],
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 5,
+                "WriteCapacityUnits": 5
+            }
+        }
+    },
+    "slubusroutes": {
+        "Type": "AWS::DynamoDB::Table",
+        "Properties": {
+            "AttributeDefinitions": [
+                {
+                    "AttributeName": "id",
+                    "AttributeType": "N"
+                }
+            ],
+            "KeySchema": [
+                {
+                    "AttributeName": "id",
+                    "KeyType": "HASH"
+                }
+            ],
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 5,
+                "WriteCapacityUnits": 5
+            }
+        }
+    },
+    "slubuses": {
+        "Type": "AWS::DynamoDB::Table",
+        "Properties": {
+            "AttributeDefinitions": [
+                {
+                    "AttributeName": "id",
+                    "AttributeType": "N"
+                }
+            ],
+            "KeySchema": [
+                {
+                    "AttributeName": "id",
+                    "KeyType": "HASH"
+                }
+            ],
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 5,
+                "WriteCapacityUnits": 5
+            }
+        }
+    },
     "EXTUiImportLambda":{
       "Type": "AWS::Lambda::Function",
       "Properties": {
@@ -117,6 +201,47 @@ module.exports=Object.assign(
         						"kms:Decrypt",
         					], 
         					"Resource":{"Fn::GetAtt":["QuizKey","Arn"]}
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "lambda:InvokeFunction"
+                  ],
+                  "Resource": [
+                    {"Fn::Join": ["",["arn:aws:lambda:",{ "Ref" : "AWS::Region" },":",{ "Ref" : "AWS::AccountId" },":function:qna-*"]]},
+                    {"Fn::Join": ["",["arn:aws:lambda:",{ "Ref" : "AWS::Region" },":",{ "Ref" : "AWS::AccountId" },":function:QNA-*"]]},
+                    {"Ref":"QIDLambdaArn"} 
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "firehose:PutRecord",
+                    "firehose:PutRecordBatch"
+                  ],
+                  "Resource": [
+                    {"Ref":"FeedbackFirehose"}
+                  ]
+                }
+            ]
+          }
+        },
+        {
+          "PolicyName" : "SluDynamoBusPolicy",
+          "PolicyDocument" : {
+          "Version": "2012-10-17",
+            "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:*"
+        					], 
+        					"Resource":[
+        					 {"Fn::GetAtt":["slubusroutes","Arn"]},
+        					 {"Fn::GetAtt":["slubuses","Arn"]},
+        					 {"Fn::GetAtt":["slubusstops","Arn"]}
+        					 ]
+        					
                 },
                 {
                   "Effect": "Allow",
@@ -219,7 +344,11 @@ function pylambda(name){
           "FIREHOSE_NAME":{"Ref":"FeedbackFirehoseName"},
           "ES_ADDRESS": {"Ref":"ESAddress"},
           "QUIZ_KMS_KEY":{"Ref":"QuizKey"},
-          "PYTHONPATH":"/var/task/py_modules:/var/runtime:/opt/python"
+          "PYTHONPATH":"/var/task/py_modules:/var/runtime:/opt/python:/var/task/lib",
+          "PATH":"/var/task/bin",
+          "BUSES":{"Ref" : "slubuses"},
+          "ROUTES":{"Ref" : "slubusroutes"},
+          "STOPS":{"Ref" : "slubusstops"}
         }
       },
       "Handler":`${name}.handler`,
