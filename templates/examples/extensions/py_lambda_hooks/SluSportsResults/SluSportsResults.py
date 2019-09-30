@@ -2,7 +2,7 @@ import json
 import qnalib 
 import feedparser
 
-def lambda_handler(event, context):
+def handler(event, context):
     event_results = event["res"]["result"]
     sport_type  = event_results["args"][0]
     team_endpoint = feedparser.parse('http://www.slubillikens.com/rss.dbml?db_oem_id=27200&media=results&RSS_SPORT_ID={}'.format(sport_type))
