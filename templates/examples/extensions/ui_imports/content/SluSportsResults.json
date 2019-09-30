@@ -24,7 +24,7 @@
         "markdown": "",
         "ssml": ""
       },
-      "l": "QNA:SluSportsResults",
+      "l": "QNA:EXTSluSportsResults",
       "qid": "sports.result.volleyball",
       "type": "qna",
       "q": [
@@ -56,7 +56,7 @@
         "markdown": "",
         "ssml": ""
       },
-      "l": "QNA:SluSportsResults",
+      "l": "QNA:EXTSluSportsResults",
       "qid": "sports.result.w.tennis",
       "type": "qna",
       "q": [
@@ -88,7 +88,7 @@
         "markdown": "",
         "ssml": ""
       },
-      "l": "QNA:SluSportsResults",
+      "l": "QNA:EXTSluSportsResults",
       "qid": "sports.result.softball",
       "type": "qna",
       "q": [
@@ -120,7 +120,7 @@
         "markdown": "",
         "ssml": ""
       },
-      "l": "QNA:SluSportsResults",
+      "l": "QNA:EXTSluSportsResults",
       "qid": "sports.result.w.soccer",
       "type": "qna",
       "q": [
@@ -151,7 +151,7 @@
         "markdown": "",
         "ssml": ""
       },
-      "l": "QNA:SluSportsResults",
+      "l": "QNA:EXTSluSportsResults",
       "qid": "sports.result.fieldhockey",
       "type": "qna",
       "q": [
@@ -183,7 +183,7 @@
         "markdown": "",
         "ssml": ""
       },
-      "l": "QNA:SluSportsResults",
+      "l": "QNA:EXTSluSportsResults",
       "qid": "sports.result.w.basketball",
       "type": "qna",
       "q": [
@@ -215,7 +215,7 @@
         "markdown": "",
         "ssml": ""
       },
-      "l": "QNA:SluSportsResults",
+      "l": "QNA:EXTSluSportsResults",
       "qid": "sports.result.m.tennis",
       "type": "qna",
       "q": [
@@ -247,7 +247,7 @@
         "markdown": "",
         "ssml": ""
       },
-      "l": "QNA:SluSportsResults",
+      "l": "QNA:EXTSluSportsResults",
       "qid": "sports.result.swimming",
       "type": "qna",
       "q": [
@@ -279,7 +279,7 @@
         "markdown": "",
         "ssml": ""
       },
-      "l": "QNA:SluSportsResults",
+      "l": "QNA:EXTSluSportsResults",
       "qid": "sports.result.m.soccer",
       "type": "qna",
       "q": [
@@ -311,7 +311,7 @@
         "markdown": "",
         "ssml": ""
       },
-      "l": "QNA:SluSportsResults",
+      "l": "QNA:EXTSluSportsResults",
       "qid": "sports.result.crosscountry",
       "type": "qna",
       "q": [
@@ -343,7 +343,7 @@
         "markdown": "",
         "ssml": ""
       },
-      "l": "QNA:SluSportsResults",
+      "l": "QNA:EXTSluSportsResults",
       "qid": "sports.result.m.basketball",
       "type": "qna",
       "q": [
@@ -375,7 +375,7 @@
         "markdown": "",
         "ssml": ""
       },
-      "l": "QNA:SluSportsResults",
+      "l": "QNA:EXTSluSportsResults",
       "qid": "sports.result.baseball",
       "type": "qna",
       "q": [
