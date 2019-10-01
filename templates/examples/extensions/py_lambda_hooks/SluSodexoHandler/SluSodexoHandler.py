@@ -1,7 +1,12 @@
 import json
-from botocore.vendored import requests
+import requests
 import qnalib 
+import time
+from Secrets import get_secret
 
+
+password = get_secret()
+token = fetch_token(password)
 
 
 def handler(event, context):
@@ -18,8 +23,11 @@ def handler(event, context):
     print(meal_argument)
     print(allergen_argument)
     
-    
-    sodexo_endpoint = requests.get("http://api-staging.sodexomyway.net/api/menus/13341001/14759/{}/{}".format(dietary_argument,allergen_argument))
+    if time.time() < token['exp']:
+        token = fetch_token(password)
+
+    sodexo_endpoint = requests.get("http://api-staging.sodexomyway.net/api/v1/menus/13341001/14759/{}/{}".format(dietary_argument,allergen_argument),headers={'Authorization': 'Bearer ' + token})
+        
     try:
         sodexo_endpoint.raise_for_status()
     except Exception as exc:
@@ -89,3 +97,9 @@ def written_restriction(meal_list,meal_type,meal_restriction):
         response = response_message + ", ".join(str(x) for x in meal_list[:-2]) + " ".join(str(x) for x in meal_list[-2:])
     return response
         
+        
+def fetch_token(password):
+        response = requests.post('http://api-staging.sodexomyway.net/api/authenticate', json={"Username":"slu.iot","Password":password['Sodexo']})
+        json_response = response.json()
+        token = jwt.get_unverified_claims(json_response['token'])
+        return token

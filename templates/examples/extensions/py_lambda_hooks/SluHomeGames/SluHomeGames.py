@@ -14,7 +14,7 @@ def handler(event, context):
                 game_information = date_conversion(i)
                 response_list.append(game_information)
                 
-    
+        spoken_response_list = response_list.copy()
         spoken_response_list = response_list.insert(-2,'and ')
         response_string = ''
         markdown = "| Upcoming SLU Home Games |\n|------------|-------|"
@@ -26,6 +26,7 @@ def handler(event, context):
         qnalib.markdown_response(event,markdown) 
         qnalib.text_response(event,response_string)
         qnalib.ssml_response(event,response_string)
+        print(response_string)
         
         
         return event
