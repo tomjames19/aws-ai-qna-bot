@@ -2,14 +2,24 @@ import json
 import requests
 import qnalib 
 import time
-from Secrets import get_secret
+from jose import jwt
+from secrets import get_secret
 
+def fetch_token(password):
+        response = requests.post('http://api-staging.sodexomyway.net/api/authenticate', json={"Username":"slu.iot","Password":password['Sodexo']})
+        json_response = response.json()
+        claims = jwt.get_unverified_claims(json_response['token'])
+        expiration = claims['exp']
+        response_object = {'tokenValue':json_response['token'],'expiration':expiration}
+        return response_object
 
 password = get_secret()
 token = fetch_token(password)
 
 
 def handler(event, context):
+    global token
+
     
     event_results = event["res"]["result"]
     dietary_argument = event_results["args"][0]
@@ -23,10 +33,10 @@ def handler(event, context):
     print(meal_argument)
     print(allergen_argument)
     
-    if time.time() < token['exp']:
+    if time.time() < token['expiration']:
         token = fetch_token(password)
-
-    sodexo_endpoint = requests.get("http://api-staging.sodexomyway.net/api/v1/menus/13341001/14759/{}/{}".format(dietary_argument,allergen_argument),headers={'Authorization': 'Bearer ' + token})
+        
+    sodexo_endpoint = requests.get("http://api-staging.sodexomyway.net/api/v1/menus/13341001/14759/{}/{}".format(dietary_argument,allergen_argument),headers={'Authorization': 'Bearer ' + token['tokenValue']})
         
     try:
         sodexo_endpoint.raise_for_status()
@@ -98,8 +108,3 @@ def written_restriction(meal_list,meal_type,meal_restriction):
     return response
         
         
-def fetch_token(password):
-        response = requests.post('http://api-staging.sodexomyway.net/api/authenticate', json={"Username":"slu.iot","Password":password['Sodexo']})
-        json_response = response.json()
-        token = jwt.get_unverified_claims(json_response['token'])
-        return token
