@@ -15,13 +15,13 @@ def handler(event, context):
                 response_list.append(game_information)
                 
         spoken_response_list = response_list.copy()
-        spoken_response_list = response_list.insert(-2,'and ')
         response_string = ''
-        markdown = "| Upcoming SLU Home Games |\n|------------|-------|"
+        markdown = "| | Upcoming Home Games |\n|:------------|:-----------------:|:-------:|\n|   Team |   Opponent  |Date |"
         for i in response_list:
-            markdown += "\n| {}      |".format(i)
+            print(type(i))
+            markdown +=  "\n|    {}      |  {}      | {} {} {}     |".format(i['team_name'],i['opponent_name'],i['day'],str(i['date']),str(i['time']))
         for i in spoken_response_list:
-            response_string = response_string + i
+            response_string += "The SLU {} team will plays {} on {} {} at {} .".format(i['team_name'],i['opponent_name'],i['day'],str(i['date']),str(i['time']))
         
         qnalib.markdown_response(event,markdown) 
         qnalib.text_response(event,response_string)
@@ -48,6 +48,6 @@ def date_conversion(game_instance):
     day_of_week = converted_date.weekday()
     days_of_week_dict = dict(zip(range(7),calendar.day_name))
 
-    response = 'The {} team vs {} will be on {} {} at {} '.format(team_name,opponent_name,days_of_week_dict[day_of_week], date_of_game, time_of_game)
+    response = {'team_name': team_name, 'opponent_name': opponent_name ,'day': days_of_week_dict[day_of_week], 'date': date_of_game,'time': time_of_game}
     return response
     
