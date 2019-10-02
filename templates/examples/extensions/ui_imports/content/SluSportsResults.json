@@ -57,7 +57,7 @@
         "ssml": ""
       },
       "l": "QNA:EXTSluSportsResults",
-      "qid": "sports.result.w.tennis",
+      "qid": "sports.results.w.tennis",
       "type": "qna",
       "q": [
         "what was the score of the womens tennis game",
@@ -89,7 +89,7 @@
         "ssml": ""
       },
       "l": "QNA:EXTSluSportsResults",
-      "qid": "sports.result.softball",
+      "qid": "sports.results.softball",
       "type": "qna",
       "q": [
         "what was the score of the softball game",
@@ -121,7 +121,7 @@
         "ssml": ""
       },
       "l": "QNA:EXTSluSportsResults",
-      "qid": "sports.result.w.soccer",
+      "qid": "sports.results.w.soccer",
       "type": "qna",
       "q": [
         "what was the score of the womens soccer game",
@@ -152,7 +152,7 @@
         "ssml": ""
       },
       "l": "QNA:EXTSluSportsResults",
-      "qid": "sports.result.fieldhockey",
+      "qid": "sports.results.fieldhockey",
       "type": "qna",
       "q": [
         "what was the score of the field hockey game",
@@ -184,7 +184,7 @@
         "ssml": ""
       },
       "l": "QNA:EXTSluSportsResults",
-      "qid": "sports.result.w.basketball",
+      "qid": "sports.results.w.basketball",
       "type": "qna",
       "q": [
         "what was the score of the womens basketball game",
@@ -216,7 +216,7 @@
         "ssml": ""
       },
       "l": "QNA:EXTSluSportsResults",
-      "qid": "sports.result.m.tennis",
+      "qid": "sports.results.m.tennis",
       "type": "qna",
       "q": [
         "what was the score of the mens tennis game",
@@ -248,7 +248,7 @@
         "ssml": ""
       },
       "l": "QNA:EXTSluSportsResults",
-      "qid": "sports.result.swimming",
+      "qid": "sports.results.swimming",
       "type": "qna",
       "q": [
         "what was the score of the swim meet",
@@ -280,7 +280,7 @@
         "ssml": ""
       },
       "l": "QNA:EXTSluSportsResults",
-      "qid": "sports.result.m.soccer",
+      "qid": "sports.results.m.soccer",
       "type": "qna",
       "q": [
         "what was the score of the mens soccer game",
@@ -312,7 +312,7 @@
         "ssml": ""
       },
       "l": "QNA:EXTSluSportsResults",
-      "qid": "sports.result.crosscountry",
+      "qid": "sports.results.crosscountry",
       "type": "qna",
       "q": [
         "what was the score of the cross country meet",
@@ -344,7 +344,7 @@
         "ssml": ""
       },
       "l": "QNA:EXTSluSportsResults",
-      "qid": "sports.result.m.basketball",
+      "qid": "sports.results.m.basketball",
       "type": "qna",
       "q": [
         "what was the score of the mens basketball game",
@@ -376,7 +376,7 @@
         "ssml": ""
       },
       "l": "QNA:EXTSluSportsResults",
-      "qid": "sports.result.baseball",
+      "qid": "sports.results.baseball",
       "type": "qna",
       "q": [
         "what was the score of the baseball game",
