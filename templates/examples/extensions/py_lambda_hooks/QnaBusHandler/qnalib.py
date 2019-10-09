@@ -14,6 +14,7 @@ def text_response(event,text):
 def ssml_response(event,ssml):
     if event["req"]["_type"] and event["req"]["_type"] == "ALEXA":
         event['res']['message'] = ssml
+        event['res']['plainMessage'] = ssml
     elif event["req"]["_event"]["outputDialogMode"] != "Text":
         event['res']['message'] = ssml
     else:
