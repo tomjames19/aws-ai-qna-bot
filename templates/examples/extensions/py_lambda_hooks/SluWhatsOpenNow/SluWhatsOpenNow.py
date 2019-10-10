@@ -77,7 +77,7 @@ def handler(event, context):
     if len(restaurants) == 0:
         response = "There are currently no restaurants open right now."
     elif len(restaurants) == 1:
-        response_message = "The following restuarant is currently open: "
+        response_message = "The following restaurant is currently open: "
         response = response_message + "".join(str(x) for x in restaurants)
     else:
         restaurants.insert(-1,'and')
