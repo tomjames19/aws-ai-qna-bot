@@ -24,20 +24,31 @@ def handler(event, context):
     central_object = timezone('US/Central')
     central_time = central_object.fromutc(dt.now())
     todaysDay = calendar.day_name[central_time.weekday()]
-    
-    
     dayOfWeek = searchUtteranceforDoW(question_utterance)
+
     
     if(dayOfWeek == None): 
         dayOfWeek = todaysDay
+    
+
+    
+
+       
+    
+    #time_delta = 7 - todays_int + desired_day
+    #print(time_delta)
     
    # - Extracting the building name from the event args (This is set in the content designer, and must match case)
     buildingName = event["res"]["result"]["args"][0]
     
     # - Query DynamoDB for the stop ID, which we will use to query the doublemap API.
     buildingID = getBuildingIDfromName(buildingName)
-    scheduleID = getScheduleIDfromBuildingID(buildingID)
-    daysfromSchedule = getDaysfromScheduleID(scheduleID)
+    thursday_time = day_to_dt_converter(todaysDay,dayOfWeek,central_time)
+    scheduleID = getScheduleIDfromBuildingID(buildingID,thursday_time)
+    daysfromSchedule = getDaysfromScheduleID(scheduleID,dayOfWeek)
+    
+    print(thursday_time)
+
     
     
     # - Initialize the markdown values.
@@ -46,14 +57,12 @@ def handler(event, context):
     # - Construct the days message.
     for days in daysfromSchedule:
         
-        #openHrsConverted = dt.strptime(str(days['open']), '%H:%M').strftime('%I:%M %p')
-        #print(openHrsConverted)
         # - Initialize the short response. 
         if(expandDayfromShortName(days['days']) == dayOfWeek):
             if(days['isclosed']):
-                initialmessage = "On {} the {} is closed\n, here are the hours for the week:\n ".format(str(expandDayfromShortName(days['days'])), buildingName)
+                initialmessage = "On {} the {} is closed\n ".format(str(expandDayfromShortName(days['days'])), buildingName)
             else :
-                initialmessage = "On {} the {} is open from {} to {}\n, here are the hours for the week:\n ".format(str(expandDayfromShortName(days['days'])), buildingName, dt.strptime(str(days['open']), '%H:%M').strftime('%I:%M %p'), dt.strptime(str(days['closed']), '%H:%M').strftime('%I:%M %p'))
+                initialmessage = "On {} the {} is open from {} to {}\n".format(str(expandDayfromShortName(days['days'])), buildingName, dt.strptime(str(days['open']), '%H:%M').strftime('%I:%M %p'), dt.strptime(str(days['closed']), '%H:%M').strftime('%I:%M %p'))
 
         
         if days['days']:
@@ -137,24 +146,22 @@ def searchUtteranceforDoW(utterance):
     return None
 
 
-
     
     
 # - Pull the Daily Schedule 
-def getDaysfromScheduleID(scheduleID):
+def getDaysfromScheduleID(scheduleID,dayOfWeek):
 
     table = boto3.resource('dynamodb').Table(os.environ['DAY'])
     daysarray =[]
     
     # - Query the Schedule table for the ScheduleID.
     response = table.scan(
-        FilterExpression=Key('dayScheduleId').eq(scheduleID) 
+        FilterExpression=Key('dayScheduleId').eq(scheduleID) & Key('day_name').eq(dayOfWeek[:3])
  
         )
-    
+    print(response)
 
     try:
-        #print(response)
         for i in response['Items']:
             days =   {
                 "order":  i["order"],
@@ -180,12 +187,12 @@ def getDaysfromScheduleID(scheduleID):
 
 
 # Query the Schedule ID from the building.
-def getScheduleIDfromBuildingID(buildingID):
+def getScheduleIDfromBuildingID(buildingID,current_date):
 
    # print (buildingID)
-    current_date = dt.now()
     current_date = current_date.replace(hour=0, minute=0, second=0, microsecond=0)
     print(current_date)
+
     
     table = boto3.resource('dynamodb').Table(os.environ['SCHEDULE'])
 
@@ -195,19 +202,18 @@ def getScheduleIDfromBuildingID(buildingID):
         )
     print(json.dumps(response))
     
+
+    
     for i in response["Items"]:
-        end_date = dt.strptime(i["end_date"], '%a %b %d %Y')
-        start_date = dt.strptime(i["start_date"], '%a %b %d %Y')
-        print(start_date)
-        print(end_date)
+        central_object = timezone('US/Central')
+        end_date = central_object.localize(dt.strptime(i["end_date"], '%a %b %d %Y'))
+        start_date = central_object.localize(dt.strptime(i["start_date"], '%a %b %d %Y'))
         if start_date <= current_date <= end_date:
             scheduleID = i["id"]
-            print(scheduleID)
             return scheduleID
 
         else:
             scheduleID = 'unavailable'
-            print('hell0 ' + scheduleID)
     return scheduleID
 
     try:
@@ -253,3 +259,25 @@ def expandDayfromShortName(dayName):
         return "Saturday"
     if dayName == "Sun":
         return "Sunday"
+        
+        
+def day_to_dt_converter(todaysDay,dayOfWeek,central_time):
+    weekday_dict =dict(zip(calendar.day_name,range(7)))
+    todays_int = weekday_dict[todaysDay]
+    desired_day = (weekday_dict[dayOfWeek])
+
+    
+    if todays_int == 0 and todays_int != desired_day:
+        exact_day = central_time + datetime.timedelta(days=desired_day)
+
+    elif todays_int != 0 and todays_int > desired_day:
+        day_delta = 7 - todays_int + desired_day
+        exact_day = central_time + datetime.timedelta(days=day_delta)
+        
+    elif todays_int != 0 and todays_int < desired_day:
+        day_delta = abs(desired_day - todays_int)
+        exact_day = central_time + datetime.timedelta(days=day_delta)
+        
+    else:
+        exact_day = central_time
+    return exact_day
