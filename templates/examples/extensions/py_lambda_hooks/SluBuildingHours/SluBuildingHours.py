@@ -57,10 +57,10 @@ def handler(event, context):
         initialmessage = "I cant find the hours for the {} building on {}. \n".format(buildingName,dayOfWeek)
         
     elif(queried_day['isclosed'] and todaysDay == dayOfWeek):
-        initialmessage = "Today the {} is closed\n ".format(buildingName)
+        initialmessage = "Today the {} is closed\n".format(buildingName)
         
     elif queried_day['isclosed']:
-        initialmessage = "On {} the {} is closed\n ".format(str(expandDayfromShortName(queried_day['days'])), buildingName)
+        initialmessage = "On {} the {} is closed\n".format(str(expandDayfromShortName(queried_day['days'])), buildingName)
         
     elif todaysDay == dayOfWeek:
         initialmessage = "Today the {} is open from {} to {}\n".format(buildingName, dt.strptime(str(queried_day['open']), '%H:%M').strftime('%I:%M %p'), dt.strptime(str(queried_day['closed']), '%H:%M').strftime('%I:%M %p'))
