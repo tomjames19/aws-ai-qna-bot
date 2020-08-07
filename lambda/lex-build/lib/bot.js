@@ -11,37 +11,39 @@ BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, express or implied. See the
 License for the specific language governing permissions and limitations under the License.
 */
 
-var Promise=require('bluebird')
-var aws=require('./aws')
-var lex=new aws.LexModelBuildingService()
-var getUtterances=require('./utterances')
-var Slot=require('./slot')
-var Intent=require('./intent')
-var _=require('lodash')
-var run=require('./run')
+const Promise=require('bluebird')
+const run=require('./run')
 
-module.exports=async function(version,data){
-    data.intents[0].intentVersion=version
+module.exports=async function(versionobj,data){
+    if (data.intents[0]['intentName'] && (data.intents[0]['intentName'].startsWith('fulfilment_'))) {
+        data.intents[0].intentVersion=versionobj.intent_version
+        if (data.intents.length > 1) {
+            data.intents[1].intentVersion=versionobj.intentFallback_version
+        }
+    } else {
+        data.intents[1].intentVersion=versionobj.intent_version
+        data.intents[0].intentVersion=versionobj.intentFallback_version
+    }
     delete data.status
     delete data.failureReason
     delete data.lastUpdatedDate
     delete data.createdDate
     delete data.version
 
-    var bot=await run('putBot',data)
-    var checksum=bot.checksum
+    const bot=await run('putBot',data)
+    const checksum=bot.checksum
     
-    var result=await run('createBotVersion',{
+    const result=await run('createBotVersion',{
         name:data.name,
         checksum
     })
-    var new_version=result.version
+    const new_version=result.version
 
     await new Promise(function(res,rej){
         next(100)
 
         async function next(count){
-            var tmp=await run("getBot",{
+            const tmp=await run("getBot",{
                 name:data.name,
                 versionOrAlias:new_version
             })

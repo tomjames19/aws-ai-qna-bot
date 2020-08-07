@@ -2,7 +2,7 @@ var fs=require('fs')
 var _=require('lodash')
 
 var files=fs.readdirSync(`${__dirname}`)
-    .filter(x=>!x.match(/README.md|Makefile|dashboard|index|test/))
+    .filter(x=>!x.match(/README.md|Makefile|dashboard|index|test|.DS_Store/))
     .map(x=>require(`./${x}`))
     
 var lambdas=[]
@@ -37,28 +37,27 @@ module.exports=Object.assign(
         },
         "Path": "/",
         "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-          {"Ref":"LambdaPolicy"}
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        ],
+        "Policies": [
+          {
+            "PolicyName" : "LambdaPolicy",
+            "PolicyDocument" : {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "lambda:*"
+                  ],
+                  "Resource":["*"]
+                }
+              ]
+            }
+          }
         ]
       }
-},
-"LambdaPolicy": {
-  "Type": "AWS::IAM::ManagedPolicy",
-  "Properties": {
-    "PolicyDocument": {
-      "Version": "2012-10-17",
-      "Statement": [
-        {
-          "Effect": "Allow",
-          "Action": [
-            "lambda:*"
-          ],
-          "Resource":["*"]
-        }
-      ]
-    }
-  }
-}
+  },
 })
 
 function permission(name){

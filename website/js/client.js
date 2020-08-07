@@ -17,6 +17,7 @@ var Vuex=require('vuex').default
 import Vuetify from 'vuetify'
 var style=require('aws-lex-web-ui/dist/lex-web-ui.css')
 var Auth=require('./lib/client-auth')
+import app from './client.vue'
 
 Vue.use(Vuex)
 Vue.use(Vuetify);
@@ -36,6 +37,10 @@ var config = {
     pushInitialTextOnRestart:false,
     AllowSuperDangerousHTMLInMessage:true,
     showDialogStateIcon:false,
+    shouldDisplayResponseCardTitle:false,
+    positiveFeedbackIntent: "Thumbs up",
+    negativeFeedbackIntent: "Thumbs down",
+    helpIntent: "Help"
   },
   recorder:{}
 }
@@ -56,20 +61,21 @@ document.addEventListener('DOMContentLoaded', function(){
 
     Promise.all([
         Config,
-        Auth(),
-        require('./client.vue')
+        Auth()
     ])
     .then(function(results){
         console.log(results)
         var config=results[0]
         var auth=results[1]
-        var app=results[2]
 
         var LexWebUi=require('aws-lex-web-ui/dist/lex-web-ui.js')
         var store=new Vuex.Store(LexWebUi.Store)
         if(auth.username){
-            config.ui.toolbarTitle+=":"+auth.username
+            config.ui.toolbarTitle+=" ["+auth.username+"]";
         }
+        config.lex.sessionAttributes = {
+            idtokenjwt:auth.idtoken,
+        } ;
         store.state.Login=auth.Login
         store.state.Username=auth.username
         Vue.use(LexWebUi.Plugin,{

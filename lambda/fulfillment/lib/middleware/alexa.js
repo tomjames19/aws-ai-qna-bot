@@ -1,5 +1,25 @@
-var _=require('lodash')
-exports.parse=function(event){
+var _=require('lodash');
+var translate = require('./multilanguage.js');
+
+async function get_welcome_message(req, locale){
+    const welcome_message = _.get(req,'_settings.DEFAULT_ALEXA_LAUNCH_MESSAGE', 'Hello, Please ask a question');
+    if (_.get(req._settings, 'ENABLE_MULTI_LANGUAGE_SUPPORT')){
+        return await translate.translateText(welcome_message,'en',locale);
+    } else {
+        return welcome_message;
+    }
+}
+async function get_stop_message(req, locale){
+    const stop_message = _.get(req,'_settings.DEFAULT_ALEXA_STOP_MESSAGE', 'Goodbye');
+    if (_.get(req._settings, 'ENABLE_MULTI_LANGUAGE_SUPPORT')){
+        return await translate.translateText(stop_message,'en',locale); 
+    } else {
+        return stop_message;
+    }
+}
+
+exports.parse=async function(req){
+    var event = req._event;
     var out={
         _type:"ALEXA",
         _userId:_.get(event,"session.user.userId","Unknown Alexa User"),
@@ -8,17 +28,24 @@ exports.parse=function(event){
             _.get(event,'session.attributes',{}),
             x=>{
                 try {
-                    return JSON.parse(x)
+                    return JSON.parse(x);
                 } catch(e){
-                    return x
+                    return x;
                 }
             }
         ),
         channel:null,
-    }
-    var welcome_message = process.env.DEFAULT_ALEXA_LAUNCH_MESSAGE ? process.env.DEFAULT_ALEXA_LAUNCH_MESSAGE : "Hello, Please ask a question";
+    };
+    // set userPreferredLocale from Alexa request
+    const alexa_locale = _.get(event,'request.locale').split("-")[0];
+    out.session.userPreferredLocale = alexa_locale;
+    console.log("Set userPreferredLocale:", out.session.userPreferredLocale);
+    var welcome_message;
+    var stop_message;
+    
     switch(_.get(event,"request.type")){
         case "LaunchRequest":
+            welcome_message = await get_welcome_message(req,alexa_locale);
             throw new Respond({
                 version:'1.0',
                 response:{
@@ -26,12 +53,17 @@ exports.parse=function(event){
                         type:"PlainText",
                         text: welcome_message
                     },
+                    card: {
+                      type: "Simple",
+                      title: "Welcome",
+                      content:welcome_message
+                    },
                     shouldEndSession:false
                 }
-            })
+            });
             break;
         case "IntentRequest":
-            out.question=_.get(event,'request.intent.slots.QnA_slot.value')
+            out.question=_.get(event,'request.intent.slots.QnA_slot.value');
             break;
         case "SessionEndedRequest":
             throw new End() 
@@ -40,18 +72,25 @@ exports.parse=function(event){
     
     switch(_.get(event,"request.intent.name")){
         case "AMAZON.CancelIntent":
+            stop_message = await get_stop_message(req,alexa_locale);
             throw new Respond({
                 version:'1.0',
                 response:{
                     outputSpeech:{
                         type:"PlainText",
-                        text:"GoodBye"
+                        text:stop_message
+                    },
+                    card: {
+                      type: "Simple",
+                      title: "Cancel",
+                      content:stop_message
                     },
                     shouldEndSession:true
                 }
             })
             break;
         case "AMAZON.RepeatIntent":
+            welcome_message = await get_welcome_message(req,alexa_locale);
             console.log("At Repeat Intent")
             console.log(JSON.stringify(out))
             throw new Respond({
@@ -60,12 +99,18 @@ exports.parse=function(event){
             })
             break;
         case "AMAZON.StopIntent":
+            stop_message = await get_stop_message(req,alexa_locale);
             throw new Respond({
                 version:'1.0',
                 response:{
                     outputSpeech:{
                         type:"PlainText",
-                        text:(process.env.DEFAULT_ALEXA_STOP_MESSAGE ? process.env.DEFAULT_ALEXA_STOP_MESSAGE :"Goodbye")
+                        text:stop_message
+                    },
+                    card: {
+                      type: "Simple",
+                      title: "Stop",
+                      content:stop_message
                     },
                     shouldEndSession:true
                 }

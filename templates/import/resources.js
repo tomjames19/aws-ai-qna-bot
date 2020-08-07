@@ -21,13 +21,18 @@ module.exports=Object.assign(
         },
         "Environment": {
             "Variables": {
-                STRIDE:"1000000"
+                STRIDE:"1000000",
+                ES_INDEX:{"Ref":"VarIndex"},
+                ES_METRICSINDEX:{"Ref":"MetricsIndex"},
+                ES_FEEDBACKINDEX:{"Ref":"FeedbackIndex"},
+                ES_ENDPOINT:{"Ref":"EsEndpoint"},
+                ES_PROXY:{"Ref":"EsProxyLambda"}
             }
         },
         "Handler": "index.start",
-        "MemorySize": "128",
+        "MemorySize": "1024",
         "Role": {"Fn::GetAtt": ["ImportRole","Arn"]},
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs10.x",
         "Timeout": 300,
         "Tags":[{
             Key:"Type",
@@ -46,14 +51,16 @@ module.exports=Object.assign(
         "Environment": {
             "Variables": {
                 ES_INDEX:{"Ref":"VarIndex"},
+                ES_METRICSINDEX:{"Ref":"MetricsIndex"},
+                ES_FEEDBACKINDEX:{"Ref":"FeedbackIndex"},
                 ES_ENDPOINT:{"Ref":"EsEndpoint"},
                 ES_PROXY:{"Ref":"EsProxyLambda"}
             }
         },
         "Handler": "index.step",
-        "MemorySize": "320",
+        "MemorySize": "1024",
         "Role": {"Fn::GetAtt": ["ImportRole","Arn"]},
-        "Runtime": "nodejs8.10",
+        "Runtime": "nodejs10.x",
         "Timeout": 300,
         "Tags":[{
             Key:"Type",
